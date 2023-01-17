@@ -30,7 +30,7 @@ greetings =  {
 # commands
 list_of_commands =  {
     "help" : "DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)",
-    "wowmods" : "Sends a list of World of Warcraft mods to the current channel"
+    "wowmods" : "Sends a list of some useful World of Warcraft mods to the current channel"
                     }
 
 """WoW-Related"""
@@ -52,11 +52,9 @@ def_intents = discord.Intents.default()  # required as of version 2
 def_intents.members = True               # MUST ALSO enable in Dev Portal -> Bot -> Gateway Intents
 def_intents.message_content = True       # ditto
 bot = commands.Bot(
-    command_prefix='!d ',
     case_insensitive=True,
     help_command=None,
     intents=def_intents)
-tree = app_commands.CommandTree(bot)
 @bot.event
 async def on_ready():
     current_guild = discord.utils.get(bot.guilds, name=guild)
@@ -70,9 +68,6 @@ async def on_ready():
     print('Guild members: ')
     for member in current_guild.members:
         print(member.name)
-
-    await tree.sync(guild=discord.Object(id=current_guild.id))
-    print("Ready!")
 
 # EVENTS
 @bot.event
@@ -108,10 +103,10 @@ async def on_command_error(ctx, error):
 # END EVENTS
 
 # COMMANDS
-@tree.command(name = "namesake", description = "Prints where DUMMIE's name comes from.")
+@bot.command(name='namesake', description="Prints where DUMMIE's name comes from.")
 async def first_command(interaction):
     await interaction.response.send_message("https://apexlegends.fandom.com/wiki/DUMMIE")
-@bot.command(name='wowmods') # list of WoW mods
+@bot.command(name='wowmods', description='Sends a list of some useful World of Warcraft mods to the current channel')
 async def wow_info(ctx):
     if ctx.author.bot: # make sure the user wasn't a bot
         return
@@ -125,7 +120,7 @@ async def wow_info(ctx):
     await ctx.send(response)
 
 
-@bot.command(name='help') # sends the user a list of commands to use
+@bot.command(name='help', description='DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)')
 async def list_commands(ctx):
     if ctx.author.bot:
         return
