@@ -43,7 +43,8 @@ mods =  {
         "HealBot Continued (healer QoL)" : "https://www.curseforge.com/wow/addons/heal-bot-continued",
         "Deadly Boss Mods (raid/dungeon warnings on HUD, separate installs)" : "https://www.curseforge.com/wow/addons/deadly-boss-mods",
         "Scrap (instantly sell grey junk items)" : "https://www.curseforge.com/wow/addons/scrap",
-        "Peggle Classic" : "https://www.curseforge.com/wow/addons/peggle-classic"
+        "Peggle Classic" : "https://www.curseforge.com/wow/addons/peggle-classic",
+        "Clique (click-to-cast)" : "https://www.curseforge.com/wow/addons/clique"
         }
 
 """END WoW-Related"""
