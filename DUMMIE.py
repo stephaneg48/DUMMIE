@@ -52,6 +52,7 @@ def_intents = discord.Intents.default()  # required as of version 2
 def_intents.members = True               # MUST ALSO enable in Dev Portal -> Bot -> Gateway Intents
 def_intents.message_content = True       # ditto
 bot = commands.Bot(
+    command_prefix='!d ',
     case_insensitive=True,
     help_command=None,
     intents=def_intents)
@@ -68,6 +69,12 @@ async def on_ready():
     print('Guild members: ')
     for member in current_guild.members:
         print(member.name)
+
+    try:
+        syncing = await bot.tree.sync()
+        print(f"Synced {len(syncing)} command(s)")
+    except Exception as e:
+        print(e)
 
 # EVENTS
 @bot.event
@@ -103,7 +110,7 @@ async def on_command_error(ctx, error):
 # END EVENTS
 
 # COMMANDS
-@bot.command(name='namesake', description="Prints where DUMMIE's name comes from.")
+@bot.tree.command(name='namesake', description="Prints where DUMMIE's name comes from.")
 async def first_command(interaction):
     await interaction.response.send_message("https://apexlegends.fandom.com/wiki/DUMMIE")
 @bot.command(name='wowmods', description='Sends a list of some useful World of Warcraft mods to the current channel')
