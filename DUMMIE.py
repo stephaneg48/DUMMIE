@@ -4,6 +4,7 @@ import discord
 import string
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord import app_commands
 
 load_dotenv(dotenv_path='lib/.env')
 
@@ -55,7 +56,7 @@ bot = commands.Bot(
     case_insensitive=True,
     help_command=None,
     intents=def_intents)
-
+tree = app_commands.CommandTree(bot)
 @bot.event
 async def on_ready():
     current_guild = discord.utils.get(bot.guilds, name=guild)
@@ -69,6 +70,9 @@ async def on_ready():
     print('Guild members: ')
     for member in current_guild.members:
         print(member.name)
+
+    await tree.sync(guild=discord.Object(id=current_guild.id))
+    print("Ready!")
 
 # EVENTS
 @bot.event
@@ -104,6 +108,9 @@ async def on_command_error(ctx, error):
 # END EVENTS
 
 # COMMANDS
+@tree.command(name = "namesake", description = "Prints where DUMMIE's name comes from.")
+async def first_command(interaction):
+    await interaction.response.send_message("https://apexlegends.fandom.com/wiki/DUMMIE")
 @bot.command(name='wowmods') # list of WoW mods
 async def wow_info(ctx):
     if ctx.author.bot: # make sure the user wasn't a bot
