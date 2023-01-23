@@ -2,9 +2,15 @@ import os
 import random
 import discord
 import string
+import datetime
+import urllib
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext import tasks
 from discord import app_commands
+import mysql.connector
+
 
 load_dotenv(dotenv_path='lib/.env')
 
@@ -13,6 +19,15 @@ token = os.getenv('DISCORD_TOKEN')
 guild = os.getenv('DISCORD_GUILD')  # the one to look for
 me = os.getenv('ME')
 owner = os.getenv('OWNER')
+announcements_ch = os.getenv('ANNOUNCEMENTS_CH')
+
+# access variables (database)
+db_url = os.getenv('JAWSDB_URL')
+out = urllib.parse.urlsplit(db_url)
+db_host = out.hostname
+db_user = out.username
+db_pw = out.password
+db_name = out.path[1::]
 
 # greetings
 greetings =  {
@@ -26,6 +41,11 @@ greetings =  {
          "Hey, that's me!"
                 ]
              }
+
+# start of day
+startOfDay = datetime.time(hour=0, minute=0, second=0)
+currentMonth = datetime.date.today().month
+currentDay = datetime.date.today().day
 
 # commands
 list_of_commands =  {
@@ -57,6 +77,65 @@ bot = commands.Bot(
     case_insensitive=True,
     help_command=None,
     intents=def_intents)
+
+# TASKS
+
+@tasks.loop(time=startOfDay)
+async def birthdayCheck():
+    # get database of birthdays...
+    # find any birthdays where it's the current date
+    # if found, print to announcements
+    # otherwise, just print no birthdays found in console...
+    try:
+        db = mysql.connector.connect(host=db_host, user=db_user, password=db_pw, database=db_name)
+        print("Successfully connected to database...")
+    except Exception as e:
+        print(e)
+
+    print("Today's date is {}-{}.".format(currentMonth, currentDay))
+
+    db_cursor = db.cursor()
+    db_cursor.execute("SELECT name FROM birthdays WHERE month=currentMonth AND day=currentDay")
+    db_res = db_cursor.fetchall()
+    # check length; if > 1, then say it to everyone in the list...
+    if db_res:
+        print("Found a birthday today!")
+        if len(db_res) > 2:
+            who = ""
+            for row in db_res:
+                if row != db_res[-1] and row != db_res[-2]:
+                    who += row[0] + ', '
+                elif row != db_res[-1] and row == db_res[-2]:
+                    who += row[0] + ' '
+                else:
+                    who += 'and ' + row[0]
+            birthday_message = "Today is the birthday of {}! DUMMIE and OTC wish you all a Happy Birthday!! :tada: "\
+                               ":gift: :robot:".format(who)
+            channel = bot.get_channel(int(announcements_ch))
+            await channel.send(birthday_message)
+        elif len(db_res) > 1:
+            who = ""
+            for row in db_res:
+                if row != db_res[-1]:
+                    who += row[0] + ' '
+                else:
+                    who += 'and ' + row[0]
+            birthday_message = "Today is the birthday of {}! DUMMIE and OTC wish you both a Happy Birthday!! :tada: "\
+                               ":gift: :robot:".format(who)
+            channel = bot.get_channel(int(announcements_ch))
+            await channel.send(birthday_message)
+        else:
+            birthday_message = "Today is the birthday of {}! DUMMIE and OTC wish you a Happy Birthday!! :tada: :gift: "\
+                               ":robot:".format(db_res[0][0])
+            channel = bot.get_channel(int(announcements_ch))
+            await channel.send(birthday_message)
+    else:
+        print("No birthdays found today.")
+    db.close()
+    print("DB connection closed.")
+
+
+# END TASKS
 @bot.event
 async def on_ready():
     current_guild = discord.utils.get(bot.guilds, name=guild)
@@ -77,6 +156,9 @@ async def on_ready():
     except Exception as e:
         print(e)
 
+    if not birthdayCheck.is_running():
+        birthdayCheck.start()
+        print("Checking if there are any birthdays today...")
 # EVENTS
 @bot.event
 async def on_message(message):
