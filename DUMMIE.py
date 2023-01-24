@@ -43,7 +43,7 @@ greetings =  {
              }
 
 # start of day
-startOfDay = datetime.time(hour=0, minute=44, second=0) # adjust for UTC
+startOfDay = datetime.time(hour=5, minute=0, second=0)  # adjusted for UTC... hour=0 => UTC
 currentMonth = datetime.date.today().month
 currentDay = datetime.date.today().day
 
