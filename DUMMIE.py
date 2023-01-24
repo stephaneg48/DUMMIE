@@ -43,7 +43,7 @@ greetings =  {
              }
 
 # start of day
-startOfDay = datetime.time(hour=0, minute=40, second=0) # adjust for UTC
+startOfDay = datetime.time(hour=0, minute=44, second=0) # adjust for UTC
 currentMonth = datetime.date.today().month
 currentDay = datetime.date.today().day
 
@@ -95,9 +95,8 @@ async def birthdayCheck():
     print("Today's date is {}-{}.".format(currentMonth, currentDay))
 
     db_cursor = db.cursor()
-    query_data = (currentMonth, currentDay)
     select_stmt = ("SELECT name FROM birthdays WHERE month=%(month)s AND day=%(day)s")
-    db_cursor.execute(select_stmt, query_data)
+    db_cursor.execute(select_stmt, { 'month' : currentMonth, 'day' : currentDay })
     db_res = db_cursor.fetchall()
     # check length; if > 1, then say it to everyone in the list...
     if db_res:
