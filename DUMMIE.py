@@ -138,7 +138,7 @@ async def birthdayCheck():
 # END TASKS
 @bot.event
 async def on_ready():
-    current_guild = discord.utils.get(bot.guilds, name=guild)
+    current_guild = discord.utils.get(bot.guilds, id=int(guild))
 
     print(
         f'{bot.user} has connected to Discord!\n'
