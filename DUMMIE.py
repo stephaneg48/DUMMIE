@@ -11,7 +11,6 @@ from discord.ext import tasks
 from discord import app_commands
 import mysql.connector
 
-
 load_dotenv(dotenv_path='lib/.env')
 
 # access variables
