@@ -91,8 +91,6 @@ async def birthdayCheck():
     except Exception as e:
         print(e)
 
-    print("Today's date is {}-{}.".format(currentMonth, currentDay))
-
     db_cursor = db.cursor()
     select_stmt = ("SELECT name FROM birthdays WHERE month=%(month)s AND day=%(day)s")
     db_cursor.execute(select_stmt, { 'month' : currentMonth, 'day' : currentDay })
@@ -158,6 +156,7 @@ async def on_ready():
 
     if not birthdayCheck.is_running():
         birthdayCheck.start()
+        print("Today's date is {}-{}.".format(currentMonth, currentDay))
         print("Checking if there are any birthdays today...")
 # EVENTS
 @bot.event
