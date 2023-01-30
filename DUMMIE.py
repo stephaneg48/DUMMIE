@@ -31,7 +31,6 @@ db_name = out.path[1::]
 # greetings
 greetings =  {
     "creator" : "Hello, creator!",
-     "owner" : "Hello, Xarth!",
      "member" : [
          "Hi, friend!",
          "I think we're going to do great, friend.",
@@ -63,7 +62,8 @@ mods =  {
         "Deadly Boss Mods (raid/dungeon warnings on HUD, separate installs)" : "https://www.curseforge.com/wow/addons/deadly-boss-mods",
         "Scrap (instantly sell grey junk items)" : "https://www.curseforge.com/wow/addons/scrap",
         "Peggle Classic" : "https://www.curseforge.com/wow/addons/peggle-classic",
-        "Clique (click-to-cast)" : "https://www.curseforge.com/wow/addons/clique"
+        "Clique (click-to-cast)" : "https://www.curseforge.com/wow/addons/clique",
+        "Watcher (casting rotations timeline)" : "https://www.curseforge.com/wow/addons/shotwatch"
         }
 
 """END WoW-Related"""
