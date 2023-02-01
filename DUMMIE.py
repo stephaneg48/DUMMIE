@@ -45,12 +45,6 @@ startOfDay = datetime.time(hour=5, minute=0, second=0)  # adjusted for UTC... ho
 currentMonth = datetime.date.today().month
 currentDay = datetime.date.today().day
 
-# commands
-list_of_commands =  {
-    "help" : "DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)",
-    "wowmods" : "Sends a list of some useful World of Warcraft mods to the current channel"
-                    }
-
 """WoW-Related"""
 mods =  {
         "Silver Dragon (tracks rares)" : "https://www.curseforge.com/wow/addons/silver-dragon",
@@ -216,8 +210,9 @@ async def list_commands(ctx):
     prefix = "The commands you can give me are listed below.\n"
     response = "```\n"
 
-    for key, value in list_of_commands.items():
-        comm = "{}{}\n\n".format(key.ljust(20), value)
+
+    for command in bot.commands:
+        comm = "{}{}\n\n".format(command.name.ljust(20), command.description)
         response += comm
 
     response += "\n```"
