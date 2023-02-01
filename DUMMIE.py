@@ -208,7 +208,6 @@ async def wow_info(ctx):
 
     await ctx.send(response)
 
-
 @bot.command(name='help', description='DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)')
 async def list_commands(ctx):
     if ctx.author.bot:
@@ -223,6 +222,16 @@ async def list_commands(ctx):
 
     response += "\n```"
     await ctx.author.send(prefix + response)
+
+@bot.command(name='ps', description='DUMMIE plays the specified sound')
+async def play_sound(ctx,sound):
+    if ctx.author.bot:
+        return
+
+    # placeholder response - feature to implement
+    response = "Playing the sound now!"
+
+    await ctx.author.send(response)
 
 # END COMMANDS
 
