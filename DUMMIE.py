@@ -210,23 +210,12 @@ async def list_commands(ctx):
     prefix = "The commands you can give me are listed below.\n"
     response = "```\n"
 
-
     for command in bot.commands:
         comm = "{}{}\n\n".format(command.name.ljust(20), command.description)
         response += comm
 
     response += "\n```"
     await ctx.author.send(prefix + response)
-
-@bot.command(name='ps', description='DUMMIE plays the specified sound')
-async def play_sound(ctx,sound):
-    if ctx.author.bot:
-        return
-
-    # placeholder response - feature to implement
-    response = "Playing the sound now!"
-
-    await ctx.author.send(response)
 
 # END COMMANDS
 
