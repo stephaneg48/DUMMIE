@@ -4,11 +4,12 @@ import discord
 import string
 import datetime
 import urllib
+import urllib.request
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext import tasks
-from discord import app_commands
 import mysql.connector
 
 load_dotenv(dotenv_path='lib/.env')
@@ -61,6 +62,40 @@ mods =  {
         }
 
 """END WoW-Related"""
+
+"""Helper Functions"""
+def webpageWordCount(url):
+    d = {}
+    try:
+        newURL = urllib.request.urlopen(url)
+        if newURL.getcode() == 200:
+            print("scrape result code: \n{} OK".format(newURL.getcode()))
+        webpageContent = newURL.read()
+        soup = BeautifulSoup(webpageContent, features="html.parser")
+        res = soup.get_text('\n').split()
+        for word in res:
+            for char in string.punctuation:
+                if char in word:
+                    word = word.replace(char,'')
+            if word not in d and not word.isspace():
+                d[word] = 1
+            else:
+                d[word] += 1
+
+        counter = 0
+
+        # prepare the dictionary to return to the bot here
+        while counter != 5:
+            current_max = max(d, key=d.get)
+            print("{} : {}".format(current_max, d[current_max]))
+            # prepare message to send around here (or in a similar spot for the bot command call)
+            del d[current_max]
+            counter += 1
+        d.clear()
+
+    except Exception as e:
+        print("There was a problem fetching or parsing the webpage: {}".format(e)) # tell the user the error here
+"""END Helper Functions"""
 
 def_intents = discord.Intents.default()  # required as of version 2
 def_intents.members = True               # MUST ALSO enable in Dev Portal -> Bot -> Gateway Intents
