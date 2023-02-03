@@ -4,11 +4,12 @@ import discord
 import string
 import datetime
 import urllib
+import urllib.request
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext import tasks
-from discord import app_commands
 import mysql.connector
 
 load_dotenv(dotenv_path='lib/.env')
@@ -61,6 +62,40 @@ mods =  {
         }
 
 """END WoW-Related"""
+
+"""Helper Functions"""
+def webpageWordCount(url): # returns a dictionary containing the five most frequently occurring words on a Web page
+    d = {}
+    mostFrequent = {}
+
+    newURL = urllib.request.urlopen(url)
+    if newURL.getcode() == 200:
+        print("DUMMIE successfully scraped a Web page. The web server responded with: \n{} OK".format(newURL.getcode()))
+    webpageContent = newURL.read()
+    soup = BeautifulSoup(webpageContent, features="html.parser") # default parameter to avoid warning
+    res = soup.get_text('\n').split()
+    for word in res:
+        for char in string.punctuation:
+            if char in word:
+                word = word.replace(char,'')
+        if word not in d and not word.isspace():
+            d[word] = 1
+        else:
+            d[word] += 1
+
+    counter = 0
+
+    # prepare the dictionary to return to the bot here
+    while counter != 5:
+        current_max = max(d, key=d.get)
+        mostFrequent[current_max] = d[current_max]
+        del d[current_max] # update for next highest...
+        counter += 1
+
+    d.clear()
+    return mostFrequent
+
+"""END Helper Functions"""
 
 def_intents = discord.Intents.default()  # required as of version 2
 def_intents.members = True               # MUST ALSO enable in Dev Portal -> Bot -> Gateway Intents
@@ -132,11 +167,9 @@ async def birthdayCheck():
 async def on_ready():
     current_guild = discord.utils.get(bot.guilds, id=int(guild))
 
-    print(
-        f'{bot.user} has connected to Discord!\n'
-        f'{bot.user} is currently connected to:\n'
-        f'{current_guild.name} (id: {current_guild.id})'
-    )
+    print("{} has connected to Discord!\n"
+          "{} is currently connected to:\n"
+          "{} (id: {})".format(bot.user, bot.user, current_guild.name, current_guild.id))
 
     print('Guild members: ')
     for member in current_guild.members:
@@ -144,7 +177,7 @@ async def on_ready():
 
     try:
         syncing = await bot.tree.sync()
-        print(f"Synced {len(syncing)} command(s)")
+        print("Synced {} command(s)".format(len(syncing)))
     except Exception as e:
         print(e)
 
@@ -186,10 +219,12 @@ async def on_command_error(ctx, error):
 # END EVENTS
 
 # COMMANDS
-@bot.tree.command(name='namesake', description="Prints where DUMMIE's name comes from.")
+@bot.tree.command(name='namesake',
+                  description="Prints where DUMMIE's name comes from.")
 async def first_command(interaction):
     await interaction.response.send_message("https://apexlegends.fandom.com/wiki/DUMMIE")
-@bot.command(name='wowmods', description='Sends a list of some useful World of Warcraft mods to the current channel')
+@bot.command(name='wowmods',
+             description='Sends a list of some useful World of Warcraft mods to the current channel')
 async def wow_info(ctx):
     if ctx.author.bot: # make sure the user wasn't a bot
         return
@@ -202,7 +237,28 @@ async def wow_info(ctx):
 
     await ctx.send(response)
 
-@bot.command(name='help', description='DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)')
+@bot.command(name='wc',
+             description='Scrapes a web page to find the five most frequently used words on it, then sends them'\
+                         'to the current channel')
+async def webScrape(ctx, url):
+    if ctx.author.bot:
+        return
+
+    try:
+        webpageResult = webpageWordCount(url)
+
+        response = "I carefully scanned the page and found that these are the five most frequently used words:\n```\n"
+        for key, value in webpageResult.items():
+            response += "{} : {}\n".format(key, value)
+        response += "```\n\nI hope none of these are bad words..."
+
+    except Exception as e:
+        response = "Ouch! I had a problem fetching or parsing the web page: {}\n" \
+                   "If you didn't include a URL to a web page in your message, I need one... !d wc **<URL>**".format(e)
+
+    await ctx.send(response)
+@bot.command(name='help',
+             description='DUMMIE (me!) sends this list of commands to you (not a DUMMIE!)')
 async def list_commands(ctx):
     if ctx.author.bot:
         return
