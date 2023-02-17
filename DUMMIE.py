@@ -86,13 +86,19 @@ def webpageWordCount(url): # returns a dictionary containing the five most frequ
     counter = 0
 
     # prepare the dictionary to return to the bot here
-    while counter != 5:
+    while counter != 6:
+        # spaces are far more common than other characters, so add a 6th entry
+        # entries following the space won't have spaces
         current_max = max(d, key=d.get)
         mostFrequent[current_max] = d[current_max]
-        del d[current_max] # update for next highest...
+        del d[current_max]  # update for next highest...
         counter += 1
 
     d.clear()
+    for key in mostFrequent.keys():
+        if key in string.whitespace:
+            del mostFrequent[key]
+            break  # will fail if omitted
     return mostFrequent
 
 """END Helper Functions"""
@@ -223,6 +229,7 @@ async def on_command_error(ctx, error):
                   description="Prints where DUMMIE's name comes from.")
 async def first_command(interaction):
     await interaction.response.send_message("https://apexlegends.fandom.com/wiki/DUMMIE")
+
 @bot.command(name='wowmods',
              description='Sends a list of some useful World of Warcraft mods to the current channel')
 async def wow_info(ctx):
