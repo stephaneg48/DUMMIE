@@ -191,6 +191,7 @@ async def on_ready():
         birthdayCheck.start()
         print("Today's date is {}-{}.".format(currentMonth, currentDay))
         print("Checking if there are any birthdays today...")
+        
 # EVENTS
 @bot.event
 async def on_message(message):
@@ -246,7 +247,7 @@ async def wow_info(ctx):
 
 @bot.command(name='wc',
              description='Scrapes a web page to find the five most frequently used words on it, then sends them'\
-                         'to the current channel')
+                         ' to the current channel')
 async def webScrape(ctx, url):
     if ctx.author.bot:
         return
