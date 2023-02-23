@@ -204,6 +204,7 @@ async def on_message(message):
     for word in split:
         words.append(word.strip(string.punctuation))
 
+    # greet anyone that says hi
     if ("hi" in words or "hey" in words or "hello" in words) and "dummie" in words and len(words) == 2:
         if message.author.id == int(me): # me
             response = greetings["creator"]
@@ -215,10 +216,11 @@ async def on_message(message):
             response = random.choice(greetings["member"])
             await message.channel.send(response)
 
-    attachments = message.attachments
-    if len(attachments) >= 1:
-        for attachment in attachments:
-            print(attachment)
+    # respond to a certain cat GIF being posted
+    elif message.content == "https://media.discordapp.net/attachments/704035949352452117/743848155077935244/image0.gif":
+        # crude, but it's not being re-uploaded, so only one link is used every time anyway
+        print("the cat GIF got posted")
+
 
     await bot.process_commands(message)  # check if any commands were sent
 
