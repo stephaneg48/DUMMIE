@@ -204,7 +204,7 @@ async def on_message(message):
     for word in split:
         words.append(word.strip(string.punctuation))
 
-    if ("hi" in words or "hey" in words or "hello" in words) and "dummie" in words:
+    if ("hi" in words or "hey" in words or "hello" in words) and "dummie" in words and len(words) == 2:
         if message.author.id == int(me): # me
             response = greetings["creator"]
             await message.channel.send(response)
