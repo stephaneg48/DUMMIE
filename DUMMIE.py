@@ -219,7 +219,8 @@ async def on_message(message):
     # respond to a certain cat GIF being posted
     elif message.content == "https://media.discordapp.net/attachments/704035949352452117/743848155077935244/image0.gif":
         # crude, but it's not being re-uploaded, so only one link is used every time anyway
-        print("the cat GIF got posted")
+        response = "get this stupid cat out of here"
+        await message.channel.send(response)
 
 
     await bot.process_commands(message)  # check if any commands were sent
