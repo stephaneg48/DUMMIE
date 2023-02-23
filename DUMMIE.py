@@ -215,6 +215,11 @@ async def on_message(message):
             response = random.choice(greetings["member"])
             await message.channel.send(response)
 
+    attachments = message.attachments
+    if len(attachments) >= 1:
+        for attachment in attachments:
+            print(attachment)
+
     await bot.process_commands(message)  # check if any commands were sent
 
 @bot.event  # invalid command check
