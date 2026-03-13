@@ -28,7 +28,7 @@ idna==3.10
 jsonpatch==1.33
 jsonpath-rw==1.4.0
 jsonpointer==3.0.0
-multipart==1.2.1
+multipart==1.3.1
 packaging==24.2
 pefile==2023.2.7
 ply==3.11
